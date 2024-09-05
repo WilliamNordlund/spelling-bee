@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/spelling-bee/static/css/main.f8531f83.css",
+    "main.js": "/spelling-bee/static/js/main.9868409f.js",
+    "static/js/453.b6c11b23.chunk.js": "/spelling-bee/static/js/453.b6c11b23.chunk.js",
+    "index.html": "/spelling-bee/index.html",
+    "main.f8531f83.css.map": "/spelling-bee/static/css/main.f8531f83.css.map",
+    "main.9868409f.js.map": "/spelling-bee/static/js/main.9868409f.js.map",
+    "453.b6c11b23.chunk.js.map": "/spelling-bee/static/js/453.b6c11b23.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.f8531f83.css",
+    "static/js/main.9868409f.js"
+  ]
+}
