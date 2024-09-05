@@ -1,0 +1,111 @@
+/* styles.css */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f7f7f7;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .container {
+    text-align: center;
+    margin: 20px;
+  }
+  
+  h1 {
+    font-size: 48px;
+    color: #333;
+  }
+  
+  .letter-grid {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .letter {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    background-color: lightgray;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+  }
+  
+  .letter.central {
+    background-color: #ffeb3b; /* yellow for central letter */
+    color: black;
+  }
+  
+  input[type="text"] {
+    padding: 10px;
+    font-size: 18px;
+    width: 250px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  
+  button {
+    padding: 10px 20px;
+    font-size: 18px;
+    background-color: #ffeb3b;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #ffd600;
+  }
+  
+  .word-list {
+    text-align: left;
+    margin-top: 20px;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  
+  .word-list li {
+    font-size: 18px;
+    color: #555;
+  }
+  
+  .score {
+    font-size: 24px;
+    color: #333;
+  }
+  
+  .error-message {
+    color: red;
+    font-size: 18px;
+    margin: 10px 0;
+  }
+  .controls {
+    margin-top: 20px;
+  }
+  
+  button {
+    padding: 10px 20px;
+    font-size: 18px;
+    background-color: #ffeb3b;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+  
+  button:hover {
+    background-color: #ffd600;
+  }
+  
