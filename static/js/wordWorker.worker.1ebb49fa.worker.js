@@ -1,0 +1,2 @@
+self.onmessage=function(){console.log("Worker started fetching the word list..."),fetch("/spelling-bee/swedish_words.txt").then((e=>(console.log("Fetched the word list"),e.text()))).then((e=>{const s=e.split("\n").map((e=>e.trim().toLowerCase()));console.log("Word list processed, sending data back..."),self.postMessage(s)})).catch((e=>{console.error("Error fetching the word list:",e),self.postMessage([])}))};
+//# sourceMappingURL=wordWorker.worker.1ebb49fa.worker.js.map
