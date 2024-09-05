@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import LetterGrid from './LetterGrid';
 import WordInput from './WordInput';
 import WordList from './WordList';
 import Score from './Score';
 import './styles.css'; // Import CSS styles
-
+import Worker from 'worker-loader!./wordWorker.worker'; // Import the worker using worker-loader
 interface WordSet {
   letters: string[];
   centralLetter: string;
@@ -18,88 +18,86 @@ function App() {
   const [validWords, setValidWords] = useState<string[]>([]);
   const [letters, setLetters] = useState<string[]>([]);
   const [centralLetter, setCentralLetter] = useState<string>('');
-  const [errorMessage, setErrorMessage] = useState<string>(''); // New state for error messages
-  const [currentWord, setCurrentWord] = useState<string>(''); // Current word being constructed
+  const [errorMessage, setErrorMessage] = useState<string>(''); 
+  const [currentWord, setCurrentWord] = useState<string>(''); 
+  const [isLoading, setIsLoading] = useState<boolean>(true); // New loading state
 
-  // Load the Swedish word list from the text file (simulated for now)
+  // Load the word list using a Web Worker
   useEffect(() => {
-    fetch('/swedish_words.txt')
-      .then((response) => response.text())
-      .then((data) => {
-        const wordArray = data.split('\n').map((word) => word.trim().toLowerCase());
-        setValidWords(wordArray);
-        generateValidLetterSet(wordArray);
-      });
+    const worker = new Worker(); // Initialize the Web Worker
+    worker.postMessage(''); 
+
+    worker.onmessage = function (e) {
+      const wordArray = e.data;
+      setValidWords(wordArray);
+      generateValidLetterSet(wordArray); 
+      setIsLoading(false); 
+    };
+
+    return () => {
+      worker.terminate(); 
+    };
   }, []);
 
   // Function to validate if a word can be submitted
-  const isValidWord = (word: string): boolean => {
+  const isValidWord = useCallback((word: string): boolean => {
     const wordLetters = word.toUpperCase().split('');
 
-    // Check if the word has the required middle letter and is at least 3 characters long
     if (!wordLetters.includes(centralLetter)) {
-      setErrorMessage('Ditt ord saknar den centrala bokstaven!'); // Missing central letter
+      setErrorMessage('Ditt ord saknar den centrala bokstaven!'); 
       return false;
     }
 
     if (word.length < 3) {
-      setErrorMessage('Ditt ord är för kort, det måste ha minst 3 bokstäver.'); // Too short
+      setErrorMessage('Ditt ord är för kort, det måste ha minst 3 bokstäver.'); 
       return false;
     }
 
-    // Ensure the word only contains valid letters
     if (!wordLetters.every(letter => letters.includes(letter.toUpperCase()))) {
-      setErrorMessage('Ditt ord innehåller bokstäver som inte finns bland de tillåtna.'); // Invalid letters
+      setErrorMessage('Ditt ord innehåller bokstäver som inte finns bland de tillåtna.'); 
       return false;
     }
 
-    // Ensure the word is part of the valid Swedish word list
     if (!validWords.includes(word.toLowerCase())) {
-      setErrorMessage('Ditt ord finns inte i den svenska ordlistan.'); // Not in word list
+      setErrorMessage('Ditt ord finns inte i den svenska ordlistan.'); 
       return false;
     }
 
-    // If everything is valid
-    setErrorMessage(''); // Clear error message if word is valid
+    setErrorMessage(''); 
     return true;
-  };
+  }, [centralLetter, letters, validWords]);
 
-  const handleWordSubmit = (): void => {
+  const handleWordSubmit = useCallback((): void => {
     if (!submittedWords.includes(currentWord) && isValidWord(currentWord)) {
       setSubmittedWords([...submittedWords, currentWord]);
-      setScore(score + currentWord.length); // Score based on word length
-      setCurrentWord(''); // Reset current word
+      setScore(score + currentWord.length); 
+      setCurrentWord(''); 
     }
-  };
+  }, [currentWord, submittedWords, isValidWord, score]);
 
-  const handleLetterClick = (letter: string) => {
+  const handleLetterClick = useCallback((letter: string) => {
     setCurrentWord((prevWord) => prevWord + letter);
-  };
+  }, []);
 
   // Shuffle letters while keeping the central letter in the middle
-  const shuffleLetters = () => {
-    // Remove the central letter from the letters list before shuffling
+  const shuffleLetters = useCallback(() => {
     const shuffledLetters = letters.filter(l => l !== centralLetter);
-    shuffledLetters.sort(() => Math.random() - 0.5); // Shuffle the letters
-    const newLetters = [...shuffledLetters.slice(0, 3), centralLetter, ...shuffledLetters.slice(3)]; // Keep central letter in the middle
+    shuffledLetters.sort(() => Math.random() - 0.5); 
+    const newLetters = [...shuffledLetters.slice(0, 3), centralLetter, ...shuffledLetters.slice(3)]; 
     setLetters(newLetters);
-  };
+  }, [letters, centralLetter]);
 
-  // Reset the current input word
-  const resetWordInput = () => {
+  const resetWordInput = useCallback(() => {
     setCurrentWord('');
-  };
+  }, []);
 
-  // Generate a set of letters that can form at least 15 valid words
-  const generateValidLetterSet = (wordArray: string[]) => {
+  const generateValidLetterSet = useCallback((wordArray: string[]) => {
     let possibleLetters: WordSet | null = null;
 
-    // Loop until we find a valid set of letters
     while (!possibleLetters) {
       const randomLetters = generateRandomLetters();
       const centralLetter = randomLetters[Math.floor(Math.random() * randomLetters.length)];
 
-      // Filter words that can be made with the random letters
       const validWordsForSet = wordArray.filter((word) => {
         const wordLetters = word.toUpperCase().split('');
         return (
@@ -110,17 +108,15 @@ function App() {
       });
 
       if (validWordsForSet.length >= MIN_WORDS) {
-        // Filter the central letter out before setting the letters array
         setLetters([...randomLetters.filter(l => l !== centralLetter).slice(0, 3), centralLetter, ...randomLetters.filter(l => l !== centralLetter).slice(3)]); 
         setCentralLetter(centralLetter);
         possibleLetters = { letters: randomLetters, centralLetter };
       }
     }
-  };
+  }, []);
 
-  // Generate random letters
   const generateRandomLetters = (): string[] => {
-    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ'.split(''); // Include Swedish letters
+    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ'.split('');
     const randomLetters = new Set<string>();
 
     while (randomLetters.size < 7) {
@@ -131,6 +127,15 @@ function App() {
     return Array.from(randomLetters);
   };
 
+  if (isLoading) {
+    return (
+      <div className="loading-screen">
+        <h2>Laddar spel...</h2>
+        <div className="spinner"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="container">
       <h1>Spelling Bee - Svenska</h1>
@@ -138,10 +143,10 @@ function App() {
         <>
           <LetterGrid letters={letters} requiredLetter={centralLetter} onLetterClick={handleLetterClick} />
           <WordInput currentWord={currentWord} onWordSubmit={handleWordSubmit} setCurrentWord={setCurrentWord} />
-          {errorMessage && <p className="error-message">{errorMessage}</p>} {/* Display error message */}
+          {errorMessage && <p className="error-message">{errorMessage}</p>}
           <div className="controls">
-            <button onClick={shuffleLetters}>Blanda bokstäver</button> {/* Shuffle letters button */}
-            <button onClick={resetWordInput}>Återställ ord</button> {/* Reset word input button */}
+            <button onClick={shuffleLetters}>Blanda bokstäver</button>
+            <button onClick={resetWordInput}>Återställ ord</button>
           </div>
           <Score score={score} />
           <WordList words={submittedWords} />
