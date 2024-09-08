@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/spelling-bee/static/css/main.4be95e9b.css",
-    "main.js": "/spelling-bee/static/js/main.ede189fa.js",
+    "main.css": "/spelling-bee/static/css/main.898cb600.css",
+    "main.js": "/spelling-bee/static/js/main.a389670a.js",
     "static/js/453.b6c11b23.chunk.js": "/spelling-bee/static/js/453.b6c11b23.chunk.js",
     "index.html": "/spelling-bee/index.html",
     "static/js/wordWorker.worker.1ebb49fa.worker.js": "/spelling-bee/static/js/wordWorker.worker.1ebb49fa.worker.js",
-    "main.4be95e9b.css.map": "/spelling-bee/static/css/main.4be95e9b.css.map",
-    "main.ede189fa.js.map": "/spelling-bee/static/js/main.ede189fa.js.map",
+    "main.898cb600.css.map": "/spelling-bee/static/css/main.898cb600.css.map",
+    "main.a389670a.js.map": "/spelling-bee/static/js/main.a389670a.js.map",
     "453.b6c11b23.chunk.js.map": "/spelling-bee/static/js/453.b6c11b23.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.4be95e9b.css",
-    "static/js/main.ede189fa.js"
+    "static/css/main.898cb600.css",
+    "static/js/main.a389670a.js"
   ]
 }
